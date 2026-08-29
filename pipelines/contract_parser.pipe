@@ -1,0 +1,68 @@
+{
+  "components": [
+    {
+      "id": "chat_1",
+      "provider": "chat",
+      "config": {
+        "hideForm": true,
+        "mode": "Source",
+        "parameters": {},
+        "type": "chat"
+      }
+    },
+    {
+      "id": "prompt_1",
+      "provider": "prompt",
+      "config": {
+        "instructions": [
+          "You are an expert SaaS legal and financial contract parser for Revenue Leakage Guard (Scout).\nAnalyze the contract text provided and extract the exact commercial parameters.\n\nYou must return a valid JSON object matching this exact schema:\n{\n  \"clientName\": string,\n  \"effectiveDate\": \"YYYY-MM-DD\",\n  \"annualFee\": number,\n  \"discountPct\": number,\n  \"discountExpiry\": \"YYYY-MM-DD\" or null,\n  \"seatsIncluded\": number,\n  \"modules\": string[],\n  \"modulePrices\": { [moduleName: string]: number },\n  \"overageSeatPrice\": number,\n  \"rawClauses\": {\n    \"pricingClause\": string,\n    \"discountClause\": string,\n    \"entitlementsClause\": string,\n    \"overageClause\": string\n  }\n}\n\nDo not output markdown code blocks or explanatory text. Return ONLY the raw JSON object."
+        ],
+        "parameters": {}
+      },
+      "input": [
+        {
+          "lane": "questions",
+          "from": "chat_1"
+        }
+      ]
+    },
+    {
+      "id": "llm_gemini_1",
+      "provider": "llm_gemini",
+      "config": {
+        "profile": "custom",
+        "custom": {
+          "model": "gemini-2.5-flash",
+          "apikey": "${ROCKETRIDE_GEMINI_KEY}"
+        },
+        "parameters": {}
+      },
+      "input": [
+        {
+          "lane": "questions",
+          "from": "prompt_1"
+        }
+      ]
+    },
+    {
+      "id": "response_answers_1",
+      "provider": "response_answers",
+      "config": {
+        "laneName": "answers"
+      },
+      "input": [
+        {
+          "lane": "answers",
+          "from": "llm_gemini_1"
+        }
+      ]
+    }
+  ],
+  "project_id": "c1782e44-59a3-4a69-8260-1e5fcf432d01",
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "version": 1
+}

@@ -1,0 +1,225 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 📧 Scout Revenue True-Up Email Dispatcher\n**Flow:** Webhook → Build HTML Email → Gmail → Respond to Webhook\n\n**Payload:** `to`, `subject`, `body`, `cc`, `bcc`, `senderName`, `buttonText`, `buttonUrl`, `attachments`\n**Attachments:** Array of `{ filename, content (base64), mimeType }`"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        736,
+        784
+      ],
+      "typeVersion": 1,
+      "id": "413f36e2-6f34-40fa-bd99-beafa9c4c81f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "send-email-api",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a22b8008-5818-48bd-8343-ac081428b26d",
+      "name": "Mail",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        976
+      ],
+      "webhookId": "send-email-api"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || $input.first().json;\n\nconst to = body.to;\nconst subject = body.subject || 'Scout Revenue True-Up Notice';\nconst message = body.body || '';\nconst cc = body.cc || '';\nconst bcc = body.bcc || '';\nconst senderName = body.senderName || 'Scout RevOps Assurance';\nconst clientName = body.clientName || '';\nconst buttonText = body.buttonText || 'View Audit Ledger';\nconst buttonUrl = body.buttonUrl || '';\nconst attachments = body.attachments || [];\n\nconst htmlBody = `\n<!DOCTYPE html>\n<html lang=\"en\" style=\"color-scheme: light !important;\" data-force-color-mode=\"light\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>${subject}</title>\n  <meta name=\"color-scheme\" content=\"light\">\n  <meta name=\"supported-color-schemes\" content=\"light\">\n  <link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap\" rel=\"stylesheet\">\n  <style>\n    :root { color-scheme: light !important; }\n    @media (prefers-color-scheme: dark) {\n      html, body { background-color: #f1f5f9 !important; color: #1e293b !important; }\n    }\n  </style>\n</head>\n<body style=\"margin:0; padding:0; background-color:#f1f5f9; font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;\">\n  <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background-color:#f1f5f9; padding: 40px 16px;\">\n    <tr>\n      <td align=\"center\">\n        <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:600px; width:100%; background-color:#ffffff; border-radius:10px; border: 1px solid #e2e8f0; overflow:hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);\">\n          <tr>\n            <td style=\"padding: 22px 36px; background-color:#0f172a; border-bottom: 1px solid #1e293b;\">\n              <table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n                <tr>\n                  <td style=\"vertical-align:middle;\">\n                    <div style=\"display:inline-block; width:10px; height:10px; border-radius:50%; background-color:#6366f1; vertical-align:middle; margin-right:8px;\"></div>\n                    <span style=\"color:#ffffff; font-size:15px; font-weight:700; letter-spacing:-0.02em;\">Scout</span>\n                    <span style=\"color:#94a3b8; font-size:13px; font-weight:500; margin-left:6px;\">Revenue Assurance</span>\n                  </td>\n                  ${clientName ? `\n                  <td align=\"right\" style=\"vertical-align:middle;\">\n                    <span style=\"background-color:rgba(99,102,241,0.2); color:#c7d2fe; font-size:11px; font-weight:600; padding:4px 10px; border-radius:12px;\">\n                      ${clientName}\n                    </span>\n                  </td>\n                  ` : ''}\n                </tr>\n              </table>\n            </td>\n          </tr>\n          <tr>\n            <td style=\"padding: 36px 36px 28px;\">\n              <h1 style=\"margin: 0 0 18px; color:#0f172a; font-size:19px; font-weight:700; line-height:1.35; letter-spacing:-0.02em;\">${subject}</h1>\n              <div style=\"height:1px; background-color:#e2e8f0; margin-bottom:22px;\"></div>\n              <div style=\"color:#334155; font-size:14px; font-weight:400; line-height:1.75;\">\n                ${message.replace(/\\n/g, '<br/>')}\n              </div>\n              ${attachments.length > 0 ? `\n              <div style=\"margin-top:26px; padding:14px 18px; background-color:#f8fafc; border-radius:8px; border: 1px solid #e2e8f0;\">\n                <p style=\"margin:0 0 8px; color:#64748b; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;\">Verified Attachments (${attachments.length})</p>\n                ${attachments.map(a => `<p style=\"margin:4px 0; color:#0f172a; font-size:13px; font-weight:500;\">📄 ${a.filename}</p>`).join('')}\n              </div>\n              ` : ''}\n              ${buttonUrl ? `\n              <div style=\"margin-top:32px;\">\n                <a href=\"${buttonUrl}\" style=\"display:inline-block; background-color:#4f46e5; color:#ffffff; text-decoration:none; padding:11px 24px; border-radius:6px; font-size:13px; font-weight:600; letter-spacing:-0.01em;\">\n                  ${buttonText} &rarr;\n                </a>\n              </div>\n              ` : ''}\n            </td>\n          </tr>\n          <tr>\n            <td style=\"padding: 16px 36px; background-color:#f8fafc; border-top: 1px solid #e2e8f0;\">\n              <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n                <tr>\n                  <td style=\"vertical-align:middle;\">\n                    <p style=\"margin:0; color:#64748b; font-size:12px; font-weight:400;\">Sent via ${senderName}</p>\n                  </td>\n                  <td align=\"right\" style=\"vertical-align:middle;\">\n                    <span style=\"color:#94a3b8; font-size:11px;\">Automated RevOps Assurance</span>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n        </table>\n      </td>\n    </tr>\n  </table>\n</body>\n</html>`;\n\nfunction getMimeType(att) {\n  if (att.mimeType) return att.mimeType;\n  const ext = (att.filename || '').split('.').pop().toLowerCase();\n  const mimeMap = {\n    'txt':  'text/plain',\n    'pdf':  'application/pdf',\n    'png':  'image/png',\n    'jpg':  'image/jpeg',\n    'jpeg': 'image/jpeg',\n    'gif':  'image/gif',\n    'csv':  'text/csv',\n    'json': 'application/json',\n    'zip':  'application/zip',\n    'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',\n    'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'\n  };\n  return mimeMap[ext] || 'application/octet-stream';\n}\n\nconst outputItem = {\n  json: { to, subject, htmlBody, cc, bcc, attachmentCount: attachments.length },\n  ...(attachments.length > 0 ? { binary: {} } : {})\n};\n\nif (attachments.length > 0) {\n  for (let index = 0; index < attachments.length; index++) {\n    const att = attachments[index];\n    outputItem.binary[`attachment_${index}`] = await this.helpers.prepareBinaryData(\n      Buffer.from(att.content, 'base64'),\n      att.filename,\n      getMimeType(att)\n    );\n  }\n}\n\nreturn [outputItem];"
+      },
+      "id": "21a37b22-6342-4b39-9ae5-6592a8314625",
+      "name": "Build HTML Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        944,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"message\": \"True-up notice successfully dispatched to {{ $('Mail').item.json.body.to }}\",\n  \"data\": {\n    \"messageId\": \"{{ $json.id }}\",\n    \"threadId\": \"{{ $json.threadId }}\",\n    \"timestamp\": \"{{ $now.toISO() }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "7670f8ec-9dbb-4a73-9389-07e1958603a7",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        944
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.htmlBody }}",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "={{ $json.attachmentCount > 0 ? Object.keys($input.item.binary).join(',') : '' }}"
+              }
+            ]
+          },
+          "bccList": "={{ $json.bcc }}",
+          "ccList": "={{ $json.cc }}"
+        }
+      },
+      "id": "a2b1accd-707f-4a7c-80a8-2f85bcd8f6fb",
+      "name": "Gmail-Attachment",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1360,
+        1072
+      ],
+      "webhookId": "df30b5ff-b1b3-4510-983a-e4f11d199f9a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6exdXSuFUtAQMFhG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.htmlBody }}",
+        "options": {
+          "appendAttribution": false,
+          "bccList": "={{ $json.bcc }}",
+          "ccList": "={{ $json.cc }}"
+        }
+      },
+      "id": "d801538e-7dd4-4aa5-b01b-17e34fc97210",
+      "name": "Gmail-NO-Attachment",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1344,
+        848
+      ],
+      "webhookId": "df30b5ff-b1b3-4510-983a-e4f11d199f9a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "6exdXSuFUtAQMFhG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7d409397-b605-40a6-a170-e07f9cb502ac",
+              "leftValue": "={{ $json.attachmentCount }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1136,
+        976
+      ],
+      "id": "cb5335e1-7d5f-42e5-b874-01249528bcfb",
+      "name": "If"
+    }
+  ],
+  "connections": {
+    "Mail": {
+      "main": [
+        [
+          {
+            "node": "Build HTML Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build HTML Email": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail-Attachment": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail-NO-Attachment": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Gmail-NO-Attachment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail-Attachment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "92cebe06c725a171349d7f4cedbeb1a5a7161e38e081af77c534a396ff691435"
+  }
+}

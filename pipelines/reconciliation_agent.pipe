@@ -1,0 +1,68 @@
+{
+  "components": [
+    {
+      "id": "chat_1",
+      "provider": "chat",
+      "config": {
+        "hideForm": true,
+        "mode": "Source",
+        "parameters": {},
+        "type": "chat"
+      }
+    },
+    {
+      "id": "prompt_1",
+      "provider": "prompt",
+      "config": {
+        "instructions": [
+          "You are the Scout Agentic Revenue Reconciliation Reasoner.\nYou will receive 4 synchronized data sources: (1) Contract Agreement Clauses, (2) Active Billing Configuration, (3) Granted Entitlements, and (4) Live Telemetry Usage.\n\nYour task is to perform deep semantic reasoning, multi-wave Chain of Thought (CoT), and financial anomaly detection across these four systems.\n\nFor each detected revenue leak:\n1. Provide a step-by-step Chain of Thought explanation detailing the evidence synthesis.\n2. Analyze contract terms, discount clauses, seat limits, and add-on pricing.\n3. Diagnose the root cause of why the billing system drifted away from legal and product reality.\n4. Compute confidence score (0-100%) and suggest actionable resolution steps.\n\nOutput your evaluation as a structured JSON object with chainOfThought, contractAnalysis, driftDiagnosis, confidenceScore, nuanceFlags, and recommendedAction."
+        ],
+        "parameters": {}
+      },
+      "input": [
+        {
+          "lane": "questions",
+          "from": "chat_1"
+        }
+      ]
+    },
+    {
+      "id": "llm_gemini_1",
+      "provider": "llm_gemini",
+      "config": {
+        "profile": "custom",
+        "custom": {
+          "model": "gemini-2.5-flash",
+          "apikey": "${ROCKETRIDE_GEMINI_KEY}"
+        },
+        "parameters": {}
+      },
+      "input": [
+        {
+          "lane": "questions",
+          "from": "prompt_1"
+        }
+      ]
+    },
+    {
+      "id": "response_answers_1",
+      "provider": "response_answers",
+      "config": {
+        "laneName": "answers"
+      },
+      "input": [
+        {
+          "lane": "answers",
+          "from": "llm_gemini_1"
+        }
+      ]
+    }
+  ],
+  "project_id": "a82df910-38e2-416e-a342-998cb47f83e2",
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "version": 1
+}

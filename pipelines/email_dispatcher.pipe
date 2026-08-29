@@ -1,0 +1,126 @@
+{
+  "components": [
+    {
+      "id": "chat_1",
+      "provider": "chat",
+      "name": "Chat",
+      "config": {
+        "hideForm": true,
+        "mode": "Source",
+        "parameters": {},
+        "type": "chat"
+      },
+      "ui": {
+        "position": {
+          "x": -660,
+          "y": 30
+        },
+        "measured": {
+          "width": 150,
+          "height": 68
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      }
+    },
+    {
+      "id": "prompt_1",
+      "provider": "prompt",
+      "name": "Prompt",
+      "config": {
+        "instructions": [
+          "You are the Scout RevOps Customer Notice Formatter.\nFormat the customer true-up notice and package the structured payload for n8n email dispatch.\n\nInput received: Customer dispute details, calculated delta amount, citations, and recipient email.\nOutput a clean JSON payload with 'to', 'subject', 'body', 'senderName', 'buttonText', and 'clientName'."
+        ],
+        "parameters": {}
+      },
+      "ui": {
+        "position": {
+          "x": -530,
+          "y": -140
+        },
+        "measured": {
+          "width": 150,
+          "height": 121
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "questions",
+          "from": "chat_1"
+        }
+      ]
+    },
+    {
+      "id": "tool_n8n_1",
+      "provider": "tool_n8n",
+      "name": "n8n",
+      "config": {
+        "apiKey": "",
+        "baseUrl": "${ROCKETRIDE_N8N_URL}",
+        "mode": "sync",
+        "payloadMode": "simple",
+        "readOnly": true,
+        "type": "tool_n8n",
+        "verifyTls": true,
+        "webhookAuth": "none",
+        "workflow": "send-email-api",
+        "parameters": {}
+      },
+      "ui": {
+        "position": {
+          "x": -320,
+          "y": -120
+        },
+        "measured": {
+          "width": 150,
+          "height": 174
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "questions",
+          "from": "prompt_1"
+        }
+      ]
+    },
+    {
+      "id": "response_answers_1",
+      "provider": "response_answers",
+      "name": "Return Answers",
+      "config": {
+        "laneName": "answers"
+      },
+      "ui": {
+        "position": {
+          "x": -110,
+          "y": -100
+        },
+        "measured": {
+          "width": 150,
+          "height": 68
+        },
+        "nodeType": "default",
+        "formDataValid": true
+      },
+      "input": [
+        {
+          "lane": "answers",
+          "from": "tool_n8n_1"
+        }
+      ]
+    }
+  ],
+  "project_id": "e5b81a24-7f12-4c9b-9801-1e92d83fa109",
+  "version": 1,
+  "isLocked": false,
+  "snapToGrid": true,
+  "snapGridSize": [
+    10,
+    10
+  ],
+  "docRevision": 15
+}

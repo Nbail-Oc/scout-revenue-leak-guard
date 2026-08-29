@@ -1,0 +1,68 @@
+{
+  "components": [
+    {
+      "id": "chat_1",
+      "provider": "chat",
+      "config": {
+        "hideForm": true,
+        "mode": "Source",
+        "parameters": {},
+        "type": "chat"
+      }
+    },
+    {
+      "id": "prompt_1",
+      "provider": "prompt",
+      "config": {
+        "instructions": [
+          "You are the Scout RevOps Copilot, an expert AI revenue assurance agent for enterprise B2B SaaS.\nYou have access to ground-truth multi-source data across executed contracts, Stripe billing profiles, feature key entitlements, and live product usage telemetry.\n\nYour task is to analyze revenue leakages, root causes, mathematical exposures, and contract term drifts.\n1. Answer the user's question directly, citing exact contract clauses, financial dollar amounts, and reconciliation findings.\n2. Provide concise, actionable, and audit-ready recommendations.\n3. Maintain a professional RevOps advisor persona."
+        ],
+        "parameters": {}
+      },
+      "input": [
+        {
+          "lane": "questions",
+          "from": "chat_1"
+        }
+      ]
+    },
+    {
+      "id": "llm_gemini_1",
+      "provider": "llm_gemini",
+      "config": {
+        "profile": "custom",
+        "custom": {
+          "model": "gemini-2.5-flash",
+          "apikey": "${ROCKETRIDE_GEMINI_KEY}"
+        },
+        "parameters": {}
+      },
+      "input": [
+        {
+          "lane": "questions",
+          "from": "prompt_1"
+        }
+      ]
+    },
+    {
+      "id": "response_answers_1",
+      "provider": "response_answers",
+      "config": {
+        "laneName": "answers"
+      },
+      "input": [
+        {
+          "lane": "answers",
+          "from": "llm_gemini_1"
+        }
+      ]
+    }
+  ],
+  "project_id": "b3e94172-1402-4ab8-912a-7e04df982c14",
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  },
+  "version": 1
+}
