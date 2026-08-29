@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2022"
+    ],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@designcodeio/threeui": ["./src/shaders/index.ts"],
+      "@designcodeio/threeui/style.css": ["./src/shaders/threeui.css"],
+      "@designcodeio/threeui/*": ["./src/shaders/*"]
+    }
+  },
+  "include": [
+    "src",
+    "rsbuild.config.mts"
+  ]
+}

@@ -1,0 +1,11 @@
+export { AreaChart, type AreaChartProps } from "./area-chart";
+export { Area, type AreaProps } from "./area";
+export { BarChart, type BarChartProps } from "./bar-chart";
+export { Bar, type BarProps } from "./bar";
+export { BarSquares, type BarSquaresProps } from "./bar-squares";
+export { Background, type BackgroundProps } from "./background";
+export { Grid, type GridProps } from "./grid";
+export { XAxis, type XAxisProps } from "./x-axis";
+export { BarXAxis, type BarXAxisProps } from "./bar-x-axis";
+export { ChartTooltip, type ChartTooltipProps } from "./tooltip/chart-tooltip";
+export { PatternArea } from "./pattern-area";
