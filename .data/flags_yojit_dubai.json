@@ -1,0 +1,116 @@
+[
+  {
+    "id": "flag_808f1cf1c5c2",
+    "clientId": "yojit_dubai",
+    "type": "stale_discount",
+    "title": "Stale Discount Applied (20% past expiry)",
+    "status": "open",
+    "monthlyImpact": 833.3333333333334,
+    "cumulativeImpact": 5833.333333333334,
+    "monthsCompounding": 7,
+    "createdAt": "2026-08-28T16:13:12.386Z",
+    "evidence": {
+      "contractClause": "- Discount: 20% for first 6 months",
+      "billingRecord": {
+        "activeDiscountPct": 20,
+        "currentPrice": 42000,
+        "lastSyncedAt": "2026-08-28"
+      },
+      "deltaCalculation": "20% discount applied for 7 months past contract expiry (2026-01-15). Monthly loss: $833.33, Cumulative: $5833.33"
+    },
+    "agenticReasoning": {
+      "chainOfThought": [
+        "Wave 1 (Legal Interpretation): Analyzed contract pricing section. Found 20% intro discount clause with fixed expiration date (2026-01-15).",
+        "Wave 2 (System Cross-Examination): Examined active billing records. The billing system still applies a 20% discount on the recurring invoice.",
+        "Wave 3 (Drift Causality Diagnosis): RevOps / Sales configured the promotional discount as an indefinite recurring coupon rather than an auto-expiring 6-month rule.",
+        "Wave 4 (Valuation & True-up Formulation): Compounding for 7 months results in $5833.33 total under-billed ARR ($833.33/mo)."
+      ],
+      "contractAnalysis": "Section 3.2 specifies: \"- Discount: 20% for first 6 months\". The discount was strictly temporary for onboarding (first 6 months) and has legally lapsed.",
+      "driftDiagnosis": "Billing system coupon failed to expire on 2026-01-15. Recurring invoices continued at discounted rate without automated RevOps notification.",
+      "confidenceScore": 98,
+      "nuanceFlags": [
+        "No contract amendment or VP override found extending the discount window.",
+        "Under-billing is fully contractual and recoverable via retroactive true-up."
+      ],
+      "recommendedAction": "Draft customer true-up invoice for $5833.33 and update billing subscription to full $50,000/yr rate immediately."
+    }
+  },
+  {
+    "id": "flag_1af16c426697",
+    "clientId": "yojit_dubai",
+    "type": "usage_overage",
+    "title": "Unbilled Usage Overage (50 excess seats)",
+    "status": "open",
+    "monthlyImpact": 2500,
+    "cumulativeImpact": 7500,
+    "monthsCompounding": 3,
+    "createdAt": "2026-08-28T16:13:12.386Z",
+    "evidence": {
+      "contractClause": "## Overages",
+      "usageRecord": {
+        "activeSeats": 150,
+        "period": "2026-08"
+      },
+      "deltaCalculation": "50 excess seats used (150 active vs 100 included) at $50/seat/mo. Monthly loss: $2500.00, Cumulative: $7500.00"
+    },
+    "agenticReasoning": {
+      "chainOfThought": [
+        "Wave 1 (License Baseline): Verified contract included seats (100 user seats included at base fee).",
+        "Wave 2 (Telemetry Ingestion): Ingested product usage telemetry. Customer has 150 actively provisioning user seats.",
+        "Wave 3 (Overage Contract Rule): Contract Section 4.3 stipulates excess seats beyond base quota are billable at $50/seat/month.",
+        "Wave 4 (Drift Causality Diagnosis): Product engineering allowed seat provisioning beyond license cap without triggering automated billing webhook to update seat count."
+      ],
+      "contractAnalysis": "Section 4.3 specifies overage rate of $50/seat/month for all seats exceeding 100.",
+      "driftDiagnosis": "Telemetry indicates 50 excess seats in active use for 3 months without metered usage invoices being dispatched.",
+      "confidenceScore": 96,
+      "nuanceFlags": [
+        "Active seat growth indicates strong customer adoption.",
+        "Recommend presenting as expansion upsell or true-up invoice."
+      ],
+      "recommendedAction": "Issue metered overage invoice for $7500.00 and adjust recurring seat count to 150."
+    }
+  },
+  {
+    "id": "flag_57517ab41f27",
+    "clientId": "yojit_dubai",
+    "type": "unbilled_module",
+    "title": "Unbilled Feature/Module (Analytics - $10,000/yr)",
+    "status": "open",
+    "monthlyImpact": 833.3333333333334,
+    "cumulativeImpact": 8333.333333333334,
+    "monthsCompounding": 10,
+    "createdAt": "2026-08-28T16:13:12.386Z",
+    "evidence": {
+      "contractClause": "- Seats: 100",
+      "billingRecord": {
+        "billedModules": [
+          "Basic"
+        ],
+        "currentPrice": 42000
+      },
+      "entitlementRecord": {
+        "grantedModules": [
+          "Basic",
+          "Analytics"
+        ]
+      },
+      "deltaCalculation": "Analytics ($10000/yr) delivered & provisioned but missing from billing configuration. Monthly loss: $833.33, Cumulative: $8333.33"
+    },
+    "agenticReasoning": {
+      "chainOfThought": [
+        "Wave 1 (Contract & Entitlement Check): Customer agreement includes Analytics add-on module priced at $10,000/year. Entitlements show Analytics was granted on 2025-10-01.",
+        "Wave 2 (Billing Configuration Audit): Active billing subscription only bills for the 'Basic' tier line item ($42,000/yr).",
+        "Wave 3 (Drift Causality Diagnosis): Provisioning was activated via customer success ticket without linking back to Stripe/billing subscription items.",
+        "Wave 4 (Financial Exposure): Feature delivered and used for 10 months with zero billing charge, creating an $8,333.33 unbilled revenue leak."
+      ],
+      "contractAnalysis": "Contract explicitly designates Analytics module as a paid add-on ($10,000/year) rather than free bundled tier.",
+      "driftDiagnosis": "Entitlements database enabled the Analytics feature flag in October 2025, but the billing subscription was never updated with the $10k line item.",
+      "confidenceScore": 95,
+      "nuanceFlags": [
+        "Customer has actively accessed analytics telemetry with zero billing complaints.",
+        "High recovery success probability with explicit contractual clause proof."
+      ],
+      "recommendedAction": "Add Analytics subscription add-on ($10,000/yr) to billing and issue pro-rated true-up invoice for $8333.33."
+    }
+  }
+]

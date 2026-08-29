@@ -1,0 +1,12 @@
+[
+  {
+    "customerId": "yojit_dubai",
+    "currentPrice": 42000,
+    "activeDiscountPct": 20,
+    "billedSeats": 100,
+    "billedModules": [
+      "Basic"
+    ],
+    "lastSyncedAt": "2026-08-28"
+  }
+]

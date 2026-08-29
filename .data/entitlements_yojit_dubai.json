@@ -1,0 +1,11 @@
+[
+  {
+    "customerId": "yojit_dubai",
+    "grantedSeats": 100,
+    "grantedModules": [
+      "Basic",
+      "Analytics"
+    ],
+    "grantedAt": "2025-10-01"
+  }
+]

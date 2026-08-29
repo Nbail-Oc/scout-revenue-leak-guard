@@ -1,0 +1,11 @@
+[
+  {
+    "customerId": "yojit_dubai",
+    "period": "2026-08",
+    "activeSeats": 150,
+    "featuresUsed": [
+      "Basic",
+      "Analytics"
+    ]
+  }
+]
