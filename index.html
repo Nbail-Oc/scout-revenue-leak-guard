@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Scout — Continuous Revenue Leakage Guard & Dual-Stage AI Reconciliation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@100..900&display=block" rel="stylesheet">
+  <style>
+    :root {
+      --font-sans: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+
+      --fs-display : 54px;
+      --fs-title   : calc(var(--dp) * 20);
+      --fs-heading : calc(var(--dp) * 17);
+      --fs-body    : 16.1px;
+      --fs-eyebrow : calc(var(--dp) * 15.8);
+      --fs-ui      : 15px;
+      --fs-meta    : calc(var(--dp) * 14.3);
+      --fs-item    : calc(var(--dp) * 12.9);
+      --fs-caption : calc(var(--dp) * 12.2);
+      --fs-tab     : calc(var(--dp) * 12.1);
+      --fs-sup     : 11.4px;
+      --fs-wordmark: 18px;
+
+      --fw-light    : 388;
+      --fw-regular  : 470;
+      --fw-medium   : 500;
+      --fw-semibold : 511;
+      --fw-bold     : 577;
+      --fw-black    : 783;
+
+      --tr-display : -0.0572em;
+      --tr-title   : -0.0570em;
+      --tr-heading : -0.0200em;
+      --tr-body    : -0.0475em;
+      --tr-eyebrow : -0.0293em;
+      --tr-ui      : -0.0080em;
+      --tr-cta     : -0.0200em;
+      --tr-meta    : -0.0447em;
+      --tr-item    : -0.0287em;
+      --tr-caption : -0.0295em;
+      --tr-tab     : -0.0398em;
+      --tr-wordmark: -0.0150em;
+
+      --lh-display : 59px;
+      --lh-body    : 22px;
+      --lh-flat    : 1;
+      --lh-display-ratio : 1.1;
+      --lh-body-ratio    : 1.45;
+
+      --c-ink      : #000000;
+      --c-ink-soft : #2e2e2e;
+      --c-muted    : #b8b8b8;
+      --c-on-dark  : #ffffff;
+      --c-on-light : #000000;
+      --c-surface-nav   : #000000;
+      --c-surface-card  : #f2f2f2;
+      --c-surface-panel : #ffffff;
+      --c-border-row    : #ededed;
+      --c-accent        : #6366f1;
+
+      --u  : 548px;
+      --dp : calc(var(--u) / 548);
+
+      --ease-reveal : cubic-bezier(.22, 1, .36, 1);
+      --ease-settle : cubic-bezier(.16, 1, .30, 1);
+      --dur-nav     : .62s;
+      --dur-navitem : .5s;
+      --dur-head    : .92s;
+      --dur-copy    : .62s;
+      --dur-cta     : .58s;
+      --dur-panel   : .94s;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #ffffff;
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: geometricPrecision;
+    }
+
+    #viewport { position: fixed; inset: 0; overflow: hidden; background: #fff; }
+    #stage {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1290px;
+      height: 860px;
+      transform-origin: 0 0;
+      background: #fff;
+    }
+
+    /* Typography Utility Classes */
+    .t-display {
+      font-size: var(--fs-display);
+      font-weight: var(--fw-regular);
+      letter-spacing: var(--tr-display);
+      line-height: var(--lh-display);
+      color: var(--c-ink);
+    }
+    .t-body {
+      font-size: var(--fs-body);
+      font-weight: var(--fw-regular);
+      letter-spacing: var(--tr-body);
+      line-height: var(--lh-body);
+      color: var(--c-ink);
+    }
+    .t-title {
+      font-size: var(--fs-title);
+      font-weight: var(--fw-light);
+      letter-spacing: var(--tr-title);
+      line-height: var(--lh-flat);
+      color: var(--c-ink);
+    }
+    .t-heading {
+      font-size: var(--fs-heading);
+      font-weight: var(--fw-semibold);
+      letter-spacing: var(--tr-heading);
+      line-height: var(--lh-flat);
+      color: var(--c-ink);
+    }
+    .t-eyebrow {
+      font-size: var(--fs-eyebrow);
+      font-weight: var(--fw-light);
+      letter-spacing: var(--tr-eyebrow);
+      line-height: var(--lh-flat);
+      color: var(--c-ink);
+    }
+    .t-meta {
+      font-size: var(--fs-meta);
+      font-weight: var(--fw-light);
+      letter-spacing: var(--tr-meta);
+      line-height: var(--lh-flat);
+      color: var(--c-muted);
+    }
+    .t-item {
+      font-size: var(--fs-item);
+      font-weight: var(--fw-medium);
+      letter-spacing: var(--tr-item);
+      line-height: var(--lh-flat);
+      color: var(--c-ink);
+    }
+    .t-caption {
+      font-size: var(--fs-caption);
+      font-weight: var(--fw-light);
+      letter-spacing: var(--tr-caption);
+      line-height: var(--lh-flat);
+      color: var(--c-muted);
+    }
+
+    /* NAV DESKTOP */
+    .nav {
+      position: absolute;
+      left: calc(50% - 520px);
+      top: 38px;
+      width: 1040px;
+      height: 54px;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 27px;
+      box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+      z-index: 20;
+    }
+
+    .logo {
+      position: absolute;
+      left: 18px;
+      top: 14px;
+      width: 26px;
+      height: 26px;
+    }
+
+    .wordmark {
+      position: absolute;
+      left: 54px;
+      top: 1px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      font-size: var(--fs-wordmark);
+      font-weight: var(--fw-black);
+      letter-spacing: var(--tr-wordmark);
+      color: var(--c-on-dark);
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .nav a.link {
+      position: absolute;
+      top: 0;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      transform: translateX(-50%);
+      font-size: var(--fs-ui);
+      font-weight: var(--fw-medium);
+      letter-spacing: var(--tr-ui);
+      color: #cbd5e1;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color 0.15s ease;
+    }
+    .nav a.link:hover {
+      color: #ffffff;
+    }
+    .link.l1 { left: 360px; }
+    .link.l2 { left: 475px; }
+    .link.l3 { left: 595px; }
+    .link.l4 { left: 715px; }
+
+    .btn {
+      position: absolute;
+      border: 0;
+      border-radius: 17px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+      font-size: var(--fs-ui);
+      letter-spacing: var(--tr-cta);
+      line-height: var(--lh-flat);
+      white-space: nowrap;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .btn--nav {
+      left: 865px;
+      top: 9px;
+      width: 160px;
+      height: 36px;
+      border-radius: 18px;
+      background: var(--c-accent);
+      color: #ffffff;
+      font-weight: var(--fw-bold);
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+    }
+    .btn--nav:hover {
+      background: #4f46e5;
+      box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45);
+    }
+    .btn--hero {
+      left: calc(50% - 64px);
+      top: calc(388px + var(--dsk-hero-dy, 0px));
+      width: 129px;
+      background: var(--c-ink);
+      color: var(--c-on-dark);
+      font-weight: var(--fw-medium);
+      z-index: 10;
+    }
+
+    /* BURGER & NAVMENU (hidden on desktop) */
+    .burger { display: none; }
+    .navmenu { display: none; }
+
+    /* HERO */
+    .hero-h1 {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(203px + var(--dsk-hero-dy, 0px));
+      margin: 0;
+      text-align: center;
+      white-space: pre-line;
+      z-index: 10;
+    }
+    .hero-sub {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(333px + var(--dsk-hero-dy, 0px));
+      margin: 0;
+      text-align: center;
+      white-space: pre-line;
+      z-index: 10;
+    }
+
+    /* FULL BLEED CYAN VIDEO BAND */
+    .band {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(473px + var(--dsk-band-dy, 0px));
+      bottom: 0;
+      border-radius: 0;
+      overflow: hidden;
+      background-color: #0db5ed;
+      z-index: 1;
+    }
+    .band__video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      z-index: 0;
+    }
+
+    /* CARD GEOMETRY */
+    .card {
+      position: absolute;
+      left: calc(50% - 273px);
+      top: calc(549px + var(--dsk-band-dy, 0px));
+      width: var(--u);
+      height: calc(var(--dp) * 340);
+      transform: scale(var(--dsk-card-s, 1));
+      transformOrigin: top center;
+      background: var(--c-surface-card);
+      border-radius: calc(var(--dp) * 16);
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.6),
+        0 0 calc(var(--dp) * 9) calc(var(--dp) * 3) rgba(255, 255, 255, 0.5),
+        0 calc(var(--dp) * 22) calc(var(--dp) * 64) rgba(2, 72, 105, 0.16);
+      z-index: 5;
+    }
+
+    .card .eyebrow {
+      position: absolute;
+      left: calc(var(--dp) * 19);
+      top: calc(var(--dp) * 21);
+      white-space: nowrap;
+    }
+    .card .cardtitle {
+      position: absolute;
+      left: calc(var(--dp) * 18);
+      top: calc(var(--dp) * 47);
+      white-space: nowrap;
+    }
+    .card .meta {
+      position: absolute;
+      left: calc(var(--dp) * 15);
+      top: calc(var(--dp) * 81);
+      height: calc(var(--dp) * 28);
+      display: flex;
+      align-items: center;
+    }
+    .card .avatars {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: calc(var(--dp) * 28);
+      width: calc(var(--dp) * 50);
+    }
+    .card .av {
+      position: absolute;
+      top: 0;
+      width: calc(var(--dp) * 28);
+      height: calc(var(--dp) * 28);
+      border-radius: 50%;
+      border: max(1px, calc(var(--dp) * 2)) solid #ffffff;
+      background-size: cover;
+    }
+    .card .av1 {
+      left: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%238d6a52'/%3E%3Ccircle cx='20' cy='16' r='9' fill='%23d9a882'/%3E%3Cellipse cx='20' cy='38' rx='14' ry='13' fill='%233c3a44'/%3E%3C/svg%3E");
+    }
+    .card .av2 {
+      left: calc(var(--dp) * 11);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23b9b3ad'/%3E%3Ccircle cx='20' cy='15' r='9' fill='%23e8c4a0'/%3E%3Cellipse cx='20' cy='38' rx='14' ry='13' fill='%23786f66'/%3E%3C/svg%3E");
+    }
+    .card .av3 {
+      left: calc(var(--dp) * 22);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%23a08b7a'/%3E%3Ccircle cx='20' cy='16' r='9' fill='%23dda882'/%3E%3Cellipse cx='20' cy='38' rx='14' ry='13' fill='%236b4f3f'/%3E%3C/svg%3E");
+    }
+    .card .clockicon {
+      position: absolute;
+      left: calc(var(--dp) * 66);
+      top: calc(var(--dp) * 5);
+      width: calc(var(--dp) * 14);
+      height: calc(var(--dp) * 14);
+    }
+    .card .metatext {
+      position: absolute;
+      left: calc(var(--dp) * 89);
+      top: calc(var(--dp) * -2);
+      height: calc(var(--dp) * 28);
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+    .sep {
+      padding: 0 calc(var(--dp) * 10);
+    }
+
+    /* TABS */
+    .tabs {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(var(--dp) * 129);
+      height: calc(var(--dp) * 30);
+    }
+    .tab {
+      position: absolute;
+      top: 0;
+      height: calc(var(--dp) * 30);
+      display: flex;
+      align-items: center;
+      font-family: inherit;
+      font-size: var(--fs-tab);
+      font-weight: var(--fw-light);
+      letter-spacing: var(--tr-tab);
+      color: var(--c-muted);
+      border: 0;
+      background: transparent;
+      padding: 0;
+      white-space: nowrap;
+    }
+    .tab.is-active {
+      left: calc(var(--dp) * 19);
+      padding: 0 calc(var(--dp) * 18);
+      font-weight: var(--fw-medium);
+      color: var(--c-ink-soft);
+      background: #ffffff;
+      border-radius: calc(var(--dp) * 8) calc(var(--dp) * 8) 0 0;
+    }
+    .tab.is-active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: calc(var(--dp) * 12);
+      right: calc(var(--dp) * 13);
+      height: max(1px, calc(var(--dp) * 2));
+      background: var(--c-accent);
+    }
+    .tab.t2 { left: calc(var(--dp) * 148); }
+    .tab.t3 { left: calc(var(--dp) * 249); }
+    .tab.t4 { left: calc(var(--dp) * 351); }
+
+    /* PANEL */
+    .panel {
+      position: absolute;
+      left: calc(var(--dp) * 19);
+      top: calc(var(--dp) * 160);
+      width: calc(var(--dp) * 511);
+      height: calc(var(--dp) * 169);
+      background: var(--c-surface-panel);
+      border-radius: 0 calc(var(--dp) * 8) calc(var(--dp) * 8) calc(var(--dp) * 8);
+    }
+    .panel__heading {
+      position: absolute;
+      left: calc(var(--dp) * 12);
+      top: calc(var(--dp) * 10);
+      white-space: nowrap;
+    }
+    .row {
+      position: absolute;
+      left: calc(var(--dp) * 13);
+      width: calc(var(--dp) * 485);
+      height: calc(var(--dp) * 46);
+      background: #ffffff;
+      border: 1px solid var(--c-border-row);
+      border-radius: calc(var(--dp) * 8);
+      box-shadow: 0 1px calc(var(--dp) * 2) rgba(0, 0, 0, 0.03);
+    }
+    .row1 { top: calc(var(--dp) * 36); }
+    .row2 { top: calc(var(--dp) * 87); }
+
+    .dot {
+      position: absolute;
+      left: calc(var(--dp) * 7);
+      top: calc(var(--dp) * 7);
+      width: calc(var(--dp) * 15);
+      height: calc(var(--dp) * 15);
+    }
+    .rowtitle {
+      position: absolute;
+      left: calc(var(--dp) * 33);
+      top: calc(var(--dp) * 10);
+      white-space: nowrap;
+    }
+    .rowowner {
+      position: absolute;
+      left: calc(var(--dp) * 33);
+      top: calc(var(--dp) * 27);
+      white-space: nowrap;
+    }
+
+    /* ENTRANCE ANIMATIONS (via independent `translate`) */
+    @keyframes enter-wipe {
+      from { clip-path: inset(0 0 100% 0); }
+      to   { clip-path: inset(0 0 0% 0); }
+    }
+    @keyframes enter-drop {
+      from { opacity: 0; translate: 0 -10px; }
+      to   { opacity: 1; translate: 0 0; }
+    }
+    @keyframes enter-rise14 {
+      from { opacity: 0; translate: 0 14px; }
+      to   { opacity: 1; translate: 0 0; }
+    }
+    @keyframes enter-rise22 {
+      from { opacity: 0; translate: 0 22px; }
+      to   { opacity: 1; translate: 0 0; }
+    }
+    @keyframes enter-fade {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    [data-enter="pending"] .hero-h1 { clip-path: inset(0 0 100% 0); }
+    [data-enter="pending"] .nav { opacity: 0; translate: 0 -10px; }
+    [data-enter="pending"] .hero-sub { opacity: 0; translate: 0 14px; }
+    [data-enter="pending"] .btn--hero { opacity: 0; translate: 0 14px; }
+    [data-enter="pending"] .card { opacity: 0; translate: 0 22px; }
+    [data-enter="pending"] .logo,
+    [data-enter="pending"] .wordmark,
+    [data-enter="pending"] .nav a.link,
+    [data-enter="pending"] .btn--nav { opacity: 0; }
+
+    [data-enter="run"] .nav { animation: enter-drop var(--dur-nav) var(--ease-settle) 0.05s both; }
+    [data-enter="run"] .logo { animation: enter-fade var(--dur-navitem) var(--ease-settle) 0.18s both; }
+    [data-enter="run"] .wordmark { animation: enter-fade var(--dur-navitem) var(--ease-settle) 0.22s both; }
+    [data-enter="run"] .link.l1 { animation: enter-fade var(--dur-navitem) var(--ease-settle) 0.26s both; }
+    [data-enter="run"] .link.l2 { animation: enter-fade var(--dur-navitem) var(--ease-settle) 0.30s both; }
+    [data-enter="run"] .link.l3 { animation: enter-fade var(--dur-navitem) var(--ease-settle) 0.34s both; }
+    [data-enter="run"] .link.l4 { animation: enter-fade var(--dur-navitem) var(--ease-settle) 0.38s both; }
+    [data-enter="run"] .btn--nav { animation: enter-fade var(--dur-navitem) var(--ease-settle) 0.42s both; }
+    [data-enter="run"] .hero-h1 { animation: enter-wipe var(--dur-head) var(--ease-reveal) 0.30s both; }
+    [data-enter="run"] .hero-sub { animation: enter-rise14 var(--dur-copy) var(--ease-settle) 0.62s both; }
+    [data-enter="run"] .btn--hero { animation: enter-rise14 var(--dur-cta) var(--ease-settle) 0.78s both; }
+    [data-enter="run"] .card { animation: enter-rise22 var(--dur-panel) var(--ease-settle) 0.88s both; }
+
+    /* COMPACT / MOBILE (<= 939.98px) */
+    @media (max-width: 939.98px), (scripting: none) {
+      :root {
+        --page-margin  : clamp(16px, 3.4vw, 34px);
+        --fs-display-t : clamp(31px, 3.2vw + 1.6vh, 50px);
+        --fs-body-t    : clamp(14px, 0.9vw + 0.5vh, 16.1px);
+        --gap-stack    : clamp(14px, 2.4vh, 26px);
+        --card-inset   : clamp(24px, 5.5vh, 76px);
+        --u            : max(min(280px, 90vw), min(80vw, max(calc(1039px - 50.3vw), 60vh)));
+        --card-h       : calc(var(--dp) * 340);
+        --band-h       : min(calc(var(--card-inset) + var(--card-h) * 0.9), 52vh);
+      }
+
+      html, body { overflow: hidden; }
+      #viewport { position: fixed; inset: 0; overflow: hidden; }
+      #stage {
+        position: static;
+        width: 100%;
+        height: 100dvh;
+        transform: none !important;
+        display: grid;
+        grid-template-columns: 100%;
+        grid-template-rows:
+          auto
+          minmax(clamp(20px, 3.5vh, 44px), 1fr)
+          auto auto auto
+          minmax(clamp(16px, 2.4vh, 30px), 0.85fr)
+          minmax(0, var(--band-h));
+        grid-template-areas: "nav" "." "head" "sub" "cta" "." "art";
+        padding-top: clamp(20px, 3.4vw, 43px);
+      }
+
+      .nav {
+        position: relative;
+        grid-area: nav;
+        left: auto;
+        top: auto;
+        height: 52px;
+        width: min(calc(100% - 2 * var(--page-margin)), 820px);
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        z-index: 20;
+      }
+      .nav a.link, .btn--nav { display: none; }
+      .logo { position: static; margin-left: 9px; flex: none; }
+      .wordmark { position: static; height: auto; margin-left: 6px; }
+
+      .burger {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        margin-left: auto;
+        margin-right: 9px;
+        width: 34px;
+        height: 34px;
+        padding: 0 7px;
+        background: none;
+        border: 0;
+        border-radius: 17px;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .burger:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+      .burger__bar {
+        display: block;
+        height: 2px;
+        width: 100%;
+        background: #ffffff;
+        border-radius: 1px;
+        transition: transform 0.22s ease, opacity 0.22s ease;
+      }
+      .nav.is-open .burger__bar:first-child { transform: translateY(3.5px) rotate(45deg); }
+      .nav.is-open .burger__bar:last-child { transform: translateY(-3.5px) rotate(-45deg); }
+
+      .navmenu {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        min-width: 216px;
+        padding: 10px;
+        background: #000000;
+        border-radius: 20px;
+        opacity: 0;
+        transform: translateY(-6px);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        pointer-events: none;
+        z-index: 30;
+      }
+      .navmenu[hidden] { display: flex; }
+      .nav.is-open .navmenu { opacity: 1; transform: none; pointer-events: auto; }
+      .navmenu__link {
+        font-size: var(--fs-ui);
+        font-weight: var(--fw-medium);
+        letter-spacing: var(--tr-ui);
+        line-height: var(--lh-flat);
+        color: var(--c-on-dark);
+        text-decoration: none;
+        padding: 11px 14px;
+        border-radius: 12px;
+      }
+      .navmenu__link:hover, .navmenu__link:focus { background: rgba(255, 255, 255, 0.1); }
+      .navmenu__cta {
+        font-size: var(--fs-ui);
+        font-weight: var(--fw-bold);
+        letter-spacing: var(--tr-cta);
+        line-height: var(--lh-flat);
+        color: var(--c-on-light);
+        text-decoration: none;
+        margin-top: 6px;
+        padding: 11px 14px;
+        background: #ffffff;
+        border-radius: 17px;
+        text-align: center;
+      }
+
+      .hero-h1 {
+        grid-area: head;
+        position: static;
+        margin: 0 var(--page-margin);
+        margin-inline: auto;
+        max-width: calc(100% - 2 * var(--page-margin));
+        font-size: var(--fs-display-t);
+        line-height: var(--lh-display-ratio);
+        white-space: pre-line;
+        text-wrap: balance;
+      }
+      .hero-sub {
+        grid-area: sub;
+        position: static;
+        margin: var(--gap-stack) auto 0;
+        max-width: min(52ch, calc(100% - 2 * var(--page-margin)));
+        font-size: var(--fs-body-t);
+        line-height: var(--lh-body-ratio);
+        letter-spacing: var(--tr-body);
+        white-space: normal;
+        text-wrap: balance;
+      }
+      .btn--hero {
+        grid-area: cta;
+        position: static;
+        justify-self: center;
+        margin-top: calc(var(--gap-stack) * 1.4);
+        left: auto;
+        top: auto;
+      }
+
+      .band {
+        grid-area: art;
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        margin: 0;
+        border-radius: 0;
+        min-height: 0;
+      }
+      .card {
+        position: relative;
+        justify-self: center;
+        align-self: start;
+        margin-top: var(--card-inset);
+        transform: none;
+      }
+    }
+
+    @media (max-width: 479.98px) {
+      .hero-h1 { white-space: normal; text-wrap: balance; }
+    }
+
+    @media (max-height: 520px) {
+      :root { --band-h: calc(var(--card-h) + 2 * var(--card-inset)); }
+      html, body { height: auto; min-height: 100%; overflow: visible; }
+      #viewport { position: static; overflow: visible; }
+      #stage { height: auto; min-height: 100dvh; }
+    }
+
+    @media (scripting: none) {
+      .nav:hover .navmenu, .nav:focus-within .navmenu { opacity: 1; transform: none; pointer-events: auto; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+      .navmenu, .burger__bar { transition: none; }
+    }
+
+    /* Modal / Auth Styling */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .modal-backdrop.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-box {
+      width: 440px;
+      max-width: 92vw;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      font-family: var(--font-sans);
+    }
+  </style>
+
+  <script>
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.setAttribute('data-enter', 'pending');
+    }
+  </script>
+</head>
+<body>
+
+  <div id="viewport">
+    <div id="stage">
+
+      <!-- 1. NAVIGATION -->
+      <nav class="nav">
+        <!-- Scout Shield / Radar Logo SVG (fill #6366f1) -->
+        <svg class="logo" viewBox="0 0 26 26" fill="none" aria-label="Scout Logo">
+          <rect width="26" height="26" rx="6" fill="#6366f1"/>
+          <path d="M13 6.5L18.5 9.5V14.5C18.5 17.5 15.5 19.8 13 20.5C10.5 19.8 7.5 17.5 7.5 14.5V9.5L13 6.5Z" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="13" cy="13.5" r="2.2" fill="#ffffff"/>
+        </svg>
+
+        <a href="#" class="wordmark">
+          <span class="wordmark__lockup">Scout</span>
+        </a>
+
+        <!-- Desktop Links -->
+        <a href="#features" class="link l1">Features</a>
+        <a href="#pipeline" class="link l2">Dual-Stage AI</a>
+        <a href="#reconciliation" class="link l3">Reconciliation</a>
+        <a href="#integrations" class="link l4">ERP Integrations</a>
+        <a href="#" class="btn btn--nav" onclick="openSignUp(event)">Get Started Free</a>
+
+        <!-- Mobile Burger -->
+        <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
+          <span class="burger__bar"></span>
+          <span class="burger__bar"></span>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div id="nav-menu" class="navmenu" hidden>
+          <a href="#features" class="navmenu__link">Features</a>
+          <a href="#pipeline" class="navmenu__link">Dual-Stage AI</a>
+          <a href="#reconciliation" class="navmenu__link">Reconciliation</a>
+          <a href="#integrations" class="navmenu__link">ERP Integrations</a>
+          <a href="#" class="navmenu__cta" onclick="openSignUp(event)">Get Started Free</a>
+        </div>
+      </nav>
+
+      <!-- 2. HERO H1 -->
+      <h1 class="hero-h1 t-display">Stop B2B Revenue Leakage
+across Contracts, Billing & Usage</h1>
+
+      <!-- 3. HERO SUB -->
+      <p class="hero-sub t-body">Continuous multi-source revenue assurance powered by deterministic rules and agentic AI.
+Detect unbilled overages, expired discounts, and provisioned modules before month-end.</p>
+
+      <!-- 4. HERO CTA -->
+      <a href="#" class="btn btn--hero" onclick="openSignUp(event)">Get Started</a>
+
+      <!-- 5. CYAN VIDEO BAND -->
+      <div class="band" role="presentation">
+        <video class="band__video" autoplay muted loop playsinline poster="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260826_125039_45a71f04-36dd-4620-99d8-7526316d439e.png">
+          <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260826_125119_4963ddd4-c287-4044-b014-b68943cdd8bd.mp4" type="video/mp4">
+        </video>
+      </div>
+
+      <!-- 6. PRODUCT MOCKUP CARD: REVENUE LEAK RECONCILIATION -->
+      <div class="card">
+        <div class="eyebrow t-eyebrow"># Active Reconciliation / Enterprise Portfolio</div>
+        <div class="cardtitle t-title">Revenue Leakage Detection</div>
+
+        <div class="meta">
+          <div class="avatars">
+            <div class="av av1"></div>
+            <div class="av av2"></div>
+            <div class="av av3"></div>
+          </div>
+          <!-- Clock SVG (14x14) -->
+          <svg class="clockicon" viewBox="0 0 14 14" fill="none">
+            <circle cx="7" cy="7" r="7" fill="#d9d9d9"/>
+            <path d="M7 3.6V7.2l2.3 1.4" stroke="#f2f2f2" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          <div class="metatext t-meta">
+            <span>Audited Just Now</span><span class="sep">&bull;</span><span>3 Active Flags</span><span class="sep">&bull;</span><span>$21,666.66 at Risk</span>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab is-active">Active Leaks</button>
+          <button class="tab t2">Discrepancies</button>
+          <button class="tab t3">True-Up Invoices</button>
+          <button class="tab t4">ERP Sync</button>
+        </div>
+
+        <div class="panel">
+          <div class="panel__heading t-heading">Identified Revenue Discrepancies</div>
+
+          <!-- Row 1: Stale Discount Discrepancy -->
+          <div class="row row1">
+            <svg class="dot" viewBox="0 0 15 15" fill="none">
+              <circle cx="7.5" cy="7.5" r="7.5" fill="#ef4444"/>
+              <path d="M7.5 4.5V8.5" stroke="#ffffff" stroke-width="1.4" stroke-linecap="round"/>
+              <circle cx="7.5" cy="10.8" r="0.75" fill="#ffffff"/>
+            </svg>
+            <div class="rowtitle t-item">Stale 20% Discount active past Jan 15 expiry</div>
+            <div class="rowowner t-caption">Impact: $5,833.33/mo &bull; Stripe Billing Drift</div>
+          </div>
+
+          <!-- Row 2: Unbilled Seat Overage -->
+          <div class="row row2">
+            <svg class="dot" viewBox="0 0 15 15" fill="none">
+              <circle cx="7.5" cy="7.5" r="7.5" fill="#f59e0b"/>
+              <path d="M7.5 4.5V8.5" stroke="#ffffff" stroke-width="1.4" stroke-linecap="round"/>
+              <circle cx="7.5" cy="10.8" r="0.75" fill="#ffffff"/>
+            </svg>
+            <div class="rowtitle t-item">Unbilled 50 Seat Overage (150 active vs 100 quota)</div>
+            <div class="rowowner t-caption">Impact: $7,500.00/mo &bull; Product Telemetry Mismatch</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Sign Up Modal & Flow to Scout Dashboard -->
+  <div id="signup-modal" class="modal-backdrop" onclick="closeSignUp(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div style="width:24px; height:24px; border-radius:6px; background:#6366f1; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:12px;">
+            S
+          </div>
+          <span style="font-weight:783; font-size:16px; letter-spacing:-0.01em; color:#0f172a;">Scout Revenue Guard</span>
+        </div>
+        <button onclick="closeSignUp()" style="background:transparent; border:none; font-size:20px; cursor:pointer; color:#6b7280;">&times;</button>
+      </div>
+
+      <h2 style="margin:0 0 6px 0; font-size:20px; font-weight:700; color:#1e293b;">Create Your Scout Account</h2>
+      <p style="margin:0 0 20px 0; font-size:13px; color:#6b7280;">Access continuous revenue leakage monitoring and automated ERP writebacks.</p>
+
+      <form onsubmit="handleAuthSubmit(event)">
+        <div style="margin-bottom:14px;">
+          <label style="display:block; font-size:12px; font-weight:600; color:#374151; margin-bottom:4px;">Work Email</label>
+          <input type="email" required value="nabil.thange@scoutguard.io" placeholder="nabil.thange@scoutguard.io" style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:8px; font-size:13px; font-family:inherit; outline:none;" />
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <label style="display:block; font-size:12px; font-weight:600; color:#374151; margin-bottom:4px;">Full Name</label>
+          <input type="text" required value="Nabil Thange" placeholder="Nabil Thange" style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:8px; font-size:13px; font-family:inherit; outline:none;" />
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <label style="display:block; font-size:12px; font-weight:600; color:#374151; margin-bottom:4px;">Company Legal Entity</label>
+          <input type="text" required value="Apex Global Technologies" placeholder="Apex Global Technologies" style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:8px; font-size:13px; font-family:inherit; outline:none;" />
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <label style="display:block; font-size:12px; font-weight:600; color:#374151; margin-bottom:4px;">Password</label>
+          <input type="password" required value="••••••••••••" placeholder="••••••••••••" style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:8px; font-size:13px; font-family:inherit; outline:none;" />
+        </div>
+
+        <button type="submit" style="width:100%; padding:12px; background:#6366f1; color:#ffffff; border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit;">
+          Sign Up & Open Scout Dashboard &rarr;
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    /* DESKTOP FIT JS (min-width: 940px) */
+    const stage = document.getElementById('stage');
+    const DW = 1290, DH = 860, CARD_TOP = 549, CARD_H = 340, NAV_W = 1040, MINW = 960, HERO_SHARE = 0.55;
+
+    function fitDesktop() {
+      if (window.innerWidth < 940) {
+        stage.style.width = '';
+        stage.style.height = '';
+        stage.style.transform = '';
+        document.documentElement.style.removeProperty('--dsk-card-s');
+        document.documentElement.style.removeProperty('--dsk-band-dy');
+        document.documentElement.style.removeProperty('--dsk-hero-dy');
+        return;
+      }
+
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const s = Math.min(vh / DH, vw / MINW);
+      const W = vw / s;
+      const H = vh / s;
+      const csMax = Math.min(NAV_W, 0.80 * W) / 548;
+      const cs = Math.max(1, Math.min((H - CARD_TOP) / CARD_H, csMax));
+      const dy = Math.max(0, H - CARD_TOP - CARD_H * cs);
+      const heroDy = HERO_SHARE * dy;
+
+      stage.style.width = W + 'px';
+      stage.style.height = H + 'px';
+      stage.style.transform = 'scale(' + s + ')';
+
+      document.documentElement.style.setProperty('--dsk-card-s', cs);
+      document.documentElement.style.setProperty('--dsk-band-dy', dy + 'px');
+      document.documentElement.style.setProperty('--dsk-hero-dy', heroDy + 'px');
+
+      // Close mobile menu on desktop
+      const nav = document.querySelector('.nav');
+      if (nav) nav.classList.remove('is-open');
+    }
+
+    window.addEventListener('resize', fitDesktop);
+    window.addEventListener('orientationchange', fitDesktop);
+    window.addEventListener('pageshow', fitDesktop);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', fitDesktop);
+    if (document.fonts) document.fonts.ready.then(fitDesktop);
+    fitDesktop();
+
+    /* BURGER MENU TOGGLE */
+    const burger = document.querySelector('.burger');
+    const nav = document.querySelector('.nav');
+    const navMenu = document.getElementById('nav-menu');
+
+    if (burger && nav && navMenu) {
+      burger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = nav.classList.toggle('is-open');
+        burger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        navMenu.hidden = !isOpen;
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!nav.contains(e.target) && nav.classList.contains('is-open')) {
+          nav.classList.remove('is-open');
+          burger.setAttribute('aria-expanded', 'false');
+          navMenu.hidden = true;
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && nav.classList.contains('is-open')) {
+          nav.classList.remove('is-open');
+          burger.setAttribute('aria-expanded', 'false');
+          navMenu.hidden = true;
+          burger.focus();
+        }
+      });
+    }
+
+    /* ENTRANCE ANIMATION TIMING */
+    if (document.documentElement.getAttribute('data-enter') === 'pending') {
+      const startRun = () => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            document.documentElement.setAttribute('data-enter', 'run');
+          });
+        });
+      };
+
+      if (document.fonts) {
+        document.fonts.ready.then(startRun);
+      } else {
+        setTimeout(startRun, 100);
+      }
+
+      const card = document.querySelector('.card');
+      const endEntrance = () => {
+        document.documentElement.setAttribute('data-enter', 'done');
+      };
+
+      if (card) {
+        card.addEventListener('animationend', endEntrance, { once: true });
+      }
+      setTimeout(endEntrance, 3000);
+    }
+
+    /* AUTH & DASHBOARD ROUTING */
+    function openSignUp(e) {
+      if (e) e.preventDefault();
+      document.getElementById('signup-modal').classList.add('is-open');
+    }
+
+    function closeSignUp(e) {
+      if (e && e.target !== e.currentTarget) return;
+      document.getElementById('signup-modal').classList.remove('is-open');
+    }
+
+    function handleAuthSubmit(e) {
+      e.preventDefault();
+      localStorage.setItem('scout_authenticated', 'true');
+      window.location.href = './apps/scout_ui/dist/index.html';
+    }
+  </script>
+</body>
+</html>
